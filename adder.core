@@ -1,0 +1,81 @@
+CAPI=2:
+name: e4tham:verilog_template:adder:1.0.0
+description: Basic adder
+
+filesets:
+  # default
+  rtl:
+    files:
+      - rtl/adder.v:    {file_type: verilogSource}
+  # simulation
+  tb:
+    files:
+      - sim/adder_tb.v: {file_type: verilogSource}
+  # lint
+  lint:
+    files:
+      - lint.vlt:       {file_type: vlt}
+  # usage
+  usage:
+    files:
+      - usage.tcl:      {file_type: user, copyto: usage.tcl}
+
+
+targets:
+  default: &default
+    filesets:
+      - rtl
+
+  sim: # fusesoc run --target sim e4tham:verilog_template:adder
+    <<: *default
+    description: Simulate the design
+    filesets_append:
+      - tb
+    toplevel: adder_tb
+    default_tool: icarus
+    tools:
+      icarus:
+        iverilog_options:
+          - -g2012
+          - -Wall
+          - -Wno-timescale
+          - -DSIM
+
+  lint: # fusesoc run --target lint e4tham:verilog_template:adder
+    <<: *default
+    description: Simulate the design
+    filesets_append:
+      - lint
+    toplevel: adder
+    default_tool: verilator
+    tools:
+      verilator:
+        mode: lint-only
+        verilator_options:
+          - "-Wall"
+
+  usage: # fusesoc run --build --target usage e4tham:verilog_template:adder
+    <<: *default
+    description: Compute usage
+    filesets_append:
+      - usage
+    toplevel: adder
+    default_tool: yosys
+    tools:
+      yosys:
+        arch: ice40
+        output_format: json
+    hooks:
+      pre_build:
+        - convert_to_prep
+      post_build:
+        - record_usage
+
+
+
+scripts:
+  convert_to_prep:
+    cmd: [sed, -i, 's/synth_ice40/prep/g', edalize_yosys_procs.tcl]
+  record_usage:
+    cmd: [yosys, -c, usage.tcl]
+    filesets: [usage]
