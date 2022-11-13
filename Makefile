@@ -54,6 +54,6 @@ ${DUMP}: ${SIM} fusesoc.conf ${RTL} ${CORE_FILE}
 	fusesoc run --target sim ${PROJECT}
 
 ${USAGE_REPORT}: ${CORE_FILE} fusesoc.conf ${RTL} usage.tcl
-	fusesoc run --target usage ${PROJECT}
+	fusesoc run --build --target usage ${PROJECT}
 
 # ======================================================= #
