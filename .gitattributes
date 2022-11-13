@@ -1,0 +1,7 @@
+
+# EOL
+*       text eol=lf
+
+# Language Corrections
+*.vh    linguist-language=Verilog
+*.core  linguist-language=YAML
