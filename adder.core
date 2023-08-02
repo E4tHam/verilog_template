@@ -1,5 +1,5 @@
 CAPI=2:
-name: e4tham:verilog_template:adder:1.0.0
+name: sifferman:verilog_template:adder:1.0.0
 description: Basic adder
 
 filesets:
@@ -26,7 +26,7 @@ targets:
     filesets:
       - rtl
 
-  sim: # fusesoc run --target sim e4tham:verilog_template:adder
+  sim: # fusesoc run --target sim sifferman:verilog_template:adder
     <<: *default
     description: Simulate the design
     filesets_append:
@@ -40,8 +40,19 @@ targets:
           - -Wall
           - -Wno-timescale
           - -DSIM
+      verilator:
+        verilator_options:
+          - --binary
+          - -j 0
+          - --trace-fst
+          - --trace-structs
+          - --x-assign unique
+          - --x-initial unique
+          - -DSIM
+        run_options:
+          - +verilator+rand+reset+2
 
-  lint: # fusesoc run --target lint e4tham:verilog_template:adder
+  lint: # fusesoc run --target lint sifferman:verilog_template:adder
     <<: *default
     description: Simulate the design
     filesets_append:
@@ -52,9 +63,11 @@ targets:
       verilator:
         mode: lint-only
         verilator_options:
-          - "-Wall"
+          - -Wall
+          - +1364-2005ext+v
+          - +1800-2012ext+sv
 
-  usage: # fusesoc run --build --target usage e4tham:verilog_template:adder
+  usage: # fusesoc run --build --target usage sifferman:verilog_template:adder
     <<: *default
     description: Compute usage
     filesets_append:

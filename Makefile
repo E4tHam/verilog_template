@@ -1,17 +1,18 @@
 # ======================================================= #
 
 CORE_FILE = adder.core
-VENDOR	= e4tham
+VENDOR	= sifferman
 LIBRARY	= verilog_template
 CORE	= adder
 VERSION	= 1.0.0
-PROJECT = ${VENDOR}:${LIBRARY}:${CORE}:${VERSION}
+PROJECT	= ${VENDOR}:${LIBRARY}:${CORE}:${VERSION}
+TOOL	= icarus
 
 RTL = $(shell find rtl -type f)
 SIM = $(shell find sim -type f)
 
 # VVP Dump
-DUMP = build/${VENDOR}_${LIBRARY}_${CORE}_${VERSION}/sim-icarus/dump.fst
+DUMP = build/${VENDOR}_${LIBRARY}_${CORE}_${VERSION}/sim-${TOOL}/dump.fst
 
 # Usage
 USAGE_REPORT = build/${VENDOR}_${LIBRARY}_${CORE}_${VERSION}/usage-yosys/usage.txt
@@ -30,7 +31,7 @@ build: fusesoc.conf ${RTL}
 	fusesoc run --build --target sim ${PROJECT}
 
 sim: fusesoc.conf ${RTL}
-	fusesoc run --target sim ${PROJECT}
+	fusesoc run --target sim --tool ${TOOL} ${PROJECT}
 
 view: fusesoc.conf ${DUMP}
 	gtkwave ${DUMP} > /dev/null 2>&1 &
